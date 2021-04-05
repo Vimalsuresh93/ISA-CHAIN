@@ -1,0 +1,44 @@
+[
+    {
+        "transactionName": "isaExists",
+        "transactionLabel": "A test isaExists transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "createIsa",
+        "transactionLabel": "A test createIsa transaction",
+        "arguments": [
+            "001",
+            "some value"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "readIsa",
+        "transactionLabel": "A test readIsa transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "updateIsa",
+        "transactionLabel": "A test updateIsa transaction",
+        "arguments": [
+            "001",
+            "some other value"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "deleteIsa",
+        "transactionLabel": "A test deleteIsa transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    }
+]

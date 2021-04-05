@@ -1,0 +1,236 @@
+---
+- name: Deploy ISA blockchain infrastructure
+  hosts: localhost
+  vars:
+    #
+    # For information on these configuration options, read the documentation:
+    # https://github.com/IBM-Blockchain/ansible-role-blockchain-platform-manager#example-playbook
+    #
+    infrastructure:
+      type: docker
+      docker:
+        network: ISA
+
+    organizations:
+      - &FireDepartment
+        msp:
+          id: "FireMSP"
+          admin:
+            identity: "FireAdmin"
+            secret: "FireAdminpw"
+          ibp:
+            display_name: "Fire MSP"
+        ca: &FireDepartmentCA
+          id: "FireDepartmentCA"
+          admin_identity: "admin"
+          admin_secret: "adminpw"
+          tls:
+            enabled: false
+          docker:
+            name: ca.firedepartment.isa.com
+            hostname: ca.firedepartment.isa.com
+            port: 18050
+          ibp:
+            display_name: "FireDepartment CA"
+        peers:
+          - &FireDepartmentPeer1
+            id: "FireDepartmentPeer1"
+            identity: "FireDepartmentPeer1"
+            secret: "firedepartmentPeer1"
+            database_type: leveldb
+            tls:
+              enabled: false
+              identity: "org1peer1tls"
+              secret: "org1peer1tlspw"
+            docker:
+              name: peer0.firdepartment.isa.com
+              hostname: peer0.firedepartment.isa.com
+              port: 18051
+              chaincode_port: 18052
+              operations_port: 18053
+              couchdb:
+                name: couchdb0.firedepartment.isa.com
+                hostname: couchdb0.firedepartment.isa.com
+                port: 18054
+            ibp:
+              display_name: "FireDepartment Peer1"
+      
+        nodes: "{{ playbook_dir }}/nodes/FireDepartment"
+        wallet: "{{ playbook_dir }}/wallets/FireDepartment"
+        gateways: "{{ playbook_dir }}/gateways/FireDepartment"
+      - &ElectricityDepartment
+        msp:
+          id: "ElectricityDepartmentMSP"
+          admin:
+            identity: "ElectricityDepartmentAdmin"
+            secret: "ElectricityDepartmentAdminpw"
+          ibp:
+            display_name: "ElectricityDepartment MSP"
+        ca: &ElectricityDepartmentCA
+          id: "ElectricityDepartmentCA"
+          admin_identity: "admin"
+          admin_secret: "adminpw"
+          tls:
+            enabled: false
+          docker:
+            name: ca.electricitydepartment.isa.com
+            hostname: ca.electricitydepartment.isa.com
+            port: 19050
+          ibp:
+            display_name: "ElectricityDepartment CA"
+        peers:
+          - &ElectricityDepartmentPeer1
+            id: "ElectricityDepartmentPeer1"
+            identity: "electricitydepartmentpeer1"
+            secret: "electricitydepartmentpeer1pw"
+            database_type: leveldb
+            tls:
+              enabled: false
+              identity: "org2peer1tls"
+              secret: "org2peer1tlspw"
+            docker:
+              name: peer0.electricitydepartment.isa.com
+              hostname: peer0.electricitydepartment.isa.com
+              port: 19051
+              chaincode_port: 19052
+              operations_port: 19053
+              couchdb:
+                name: couchdb0.electricitydepartment.isa.com
+                hostname: couchdb0.electricitydepartment.isa.com
+                port: 19054
+            ibp:
+              display_name: "ElectricityDepartment Peer1"
+
+        nodes: "{{ playbook_dir }}/nodes/ElectricityDepartment"
+        wallet: "{{ playbook_dir }}/wallets/ElectricityDepartment"
+        gateways: "{{ playbook_dir }}/gateways/ElectricityDepartment"
+      
+      - &CorporationDepartment
+        msp:
+          id: "CorporationDepartmentMSP"
+          admin:
+            identity: "CorporationDepartmentAdmin"
+            secret: "CorporationDepartmentAdminpw"
+          ibp:
+            display_name: "Corporation Department MSP"
+        ca: &CorporationDepartmentCA
+          id: "CorporationDepartmentCA"
+          admin_identity: "admin"
+          admin_secret: "adminpw"
+          tls:
+            enabled: false
+          docker:
+            name: ca.CorporationDepartment.isa.com
+            hostname: ca.CorporationDepartment.isa.com
+            port: 20050
+          ibp:
+            display_name: "CorporationDepartment CA"
+        peers:
+          - &CorporationDepartmentPeer1
+            id: "CorporationDepartmentPeer1"
+            identity: "corporationdepartmentpeer1"
+            secret: "corporationdepartmentpeer1pw"
+            database_type: leveldb
+            tls:
+              enabled: false
+              identity: "org3peer1tls"
+              secret: "org3peer1tlspw"
+            docker:
+              name: peer0.corporationdepartment.auto.com
+              hostname: peer0.corporationdepartment.auto.com
+              port: 20051
+              chaincode_port: 20052
+              operations_port: 20053
+              couchdb:
+                name: couchdb0.corporationdepartment.isa.com
+                hostname: couchdb0.corporationdepartment.isa.com
+                port: 20054
+            ibp:
+              display_name: "CorporationDepartment Peer1"
+  
+        nodes: "{{ playbook_dir }}/nodes/CorporationDepartment"
+        wallet: "{{ playbook_dir }}/wallets/CorporationDepartment"
+        gateways: "{{ playbook_dir }}/gateways/CorporationDepartment"
+
+      - &OrdererOrg
+        msp:
+          id: "OrdererMSP"
+          admin:
+            identity: "ordererAdmin"
+            secret: "ordererAdminpw"
+          ibp:
+            display_name: "Orderer MSP"
+        ca: &OrdererCA
+          id: "OrdererCA"
+          admin_identity: "admin"
+          admin_secret: "adminpw"
+          tls:
+            enabled: false
+          docker:
+            name: ca.orderer.auto.com
+            hostname: ca.orderer.auto.com
+            port: 17050
+          ibp:
+            display_name: "Orderer CA"
+        orderer: &Orderer
+          id: "Orderer1"
+          identity: "orderer1"
+          secret: "orderer1pw"
+          tls:
+            enabled: false
+            identity: "orderer1tls"
+            secret: "orderer1tlspw"
+          consortium:
+            members:
+              - *FireDepartment
+              - *ElectricityDepartment
+              - *CorporationDepartment
+          docker:
+            name: orderer.auto.com
+            hostname: orderer.auto.com
+            port: 17051
+            operations_port: 17052
+          ibp:
+            display_name: "Orderer1"
+            cluster_name: "OrdererCluster"
+        nodes: "{{ playbook_dir }}/nodes/Orderer"
+        wallet: "{{ playbook_dir }}/wallets/Orderer"
+        gateways: "{{ playbook_dir }}/gateways/Orderer"
+    channels:
+      - &isachannel
+        name: isachannel
+        orderer: *Orderer
+        members:
+          - <<: *FireDepartment
+            committing_peers:
+              - *FireDepartmentPeer1
+            anchor_peers:
+              - *FireDepartmentPeer1
+          - <<: *ElectricityDepartment
+            committing_peers:
+              - *ElectricityDepartmentPeer1
+            anchor_peers:
+              - *ElectricityDepartmentPeer1
+          - <<: *CorporationDepartment
+            committing_peers:
+              - *CorporationDepartmentPeer1
+            anchor_peers:
+              - *CorporationDepartmentPeer1
+    gateways:
+      - name: FireDepartment gateway
+        organization:
+          <<: *FireDepartment
+          gateway_peers:
+            - <<: *FireDepartmentPeer1
+      - name: ElectricityDepartment gateway
+        organization:
+          <<: *ElectricityDepartment
+          gateway_peers:
+            - <<: *ElectricityDepartmentPeer1
+      - name: CorporationDepartment gateway
+        organization:
+          <<: *CorporationDepartment
+          gateway_peers:
+            - <<: *CorporationDepartmentPeer1
+  roles:
+    - ibm.blockchain_platform_manager
